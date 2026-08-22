@@ -1673,5 +1673,33 @@ function backupProduk() {
 }
 
     </script>
+
+    <script>
+    // 1. Mencegah klik kanan
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        alert('Fitur klik kanan dinonaktifkan.'); // Opsional, bisa dihapus jika tidak ingin memunculkan peringatan
+    });
+
+    // 2. Mencegah tombol F12, Ctrl+Shift+I, Ctrl+Shift+J, dan Ctrl+U
+    document.addEventListener('keydown', function(e) {
+        // Tombol F12
+        if (e.key === 'F12') {
+            e.preventDefault();
+            return false;
+        }
+        
+        // Kombinasi tombol Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U (View Source)
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) {
+            e.preventDefault();
+            return false;
+        }
+        
+        if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+</script>
 </body>
 </html>
