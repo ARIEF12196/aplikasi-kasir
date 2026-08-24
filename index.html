@@ -1738,13 +1738,13 @@ function backupProduk() {
       Masa uji coba gratis (trial) aplikasi Anda selama 6 hari telah habis. Silakan lakukan pembayaran untuk membuka kembali akses penuh aplikasi.
     </p>
     <div style="background:#f9f9f9; padding:15px; border-radius:8px; margin:20px 0; font-size:14px; color:#333;">
-      <strong>Silakan transfer ke:</strong><br>
-      BCA: 1234567890 a.n. Arief Durachman<br>
-      Nominal: <strong>Rp 150.000</strong>
+      <strong>Silakan transfer Qris:</strong><br>
+       a.n. MDproduct.id<br>
+      Nominal: <strong>Rp 100.000</strong>
     </div>
     
     <!-- Tombol diarahkan ke Landing Page Anda -->
-    <a href="https://sites.google.com/view/diffaza/halaman-muka/konfirmasi" target="_blank" style="display:block; background:#007bff; color:#fff; padding:12px 20px; text-decoration:none; border-radius:6px; font-weight:bold; margin-bottom:10px;">Lakukan Pembayaran & Konfirmasi</a>
+    <a href="https://arief12196.github.io/affione/" target="_blank" style="display:block; background:#007bff; color:#fff; padding:12px 20px; text-decoration:none; border-radius:6px; font-weight:bold; margin-bottom:10px;">Lakukan Pembayaran & Konfirmasi</a>
     
     <p style="font-size:12px; color:#999; margin-bottom:0;">Butuh bantuan? Hubungi admin.</p>
   </div>
@@ -1811,5 +1811,29 @@ function backupProduk() {
         }
     });
 </script>
+    <!-- LETAKKAN SCRIPT INI TEPAT SEBELUM </body> -->
+    <!-- ========================================== -->
+    <script>
+      // Menangkap parameter 'ref' dari URL saat halaman dimuat
+      const urlParams = new URLSearchParams(window.location.search);
+      const refCode = urlParams.get('ref');
+
+      // Jika ada kode referal di URL, simpan ke localStorage browser
+      if (refCode) {
+        localStorage.setItem('affiliate_ref', refCode);
+      }
+
+      // Fungsi untuk tombol Bayar yang membawa referal tersimpan ke affione
+      function prosesBayarReferal(e) {
+        e.preventDefault(); 
+        const savedRef = localStorage.getItem('affiliate_ref');
+        let checkoutUrl = 'https://arief12196.github.io/affione/'; 
+
+        if (savedRef) {
+          checkoutUrl += '?ref=' + savedRef;
+        }
+        window.location.href = checkoutUrl;
+      }
+    </script>
 </body>
 </html>
