@@ -173,13 +173,38 @@
     </a>
 </h1>
                         
-                        <p class="text-[11px] sm:text-xs font-bold text-red-700 flex items-center gap-1 flex-wrap">
-                            Sekali 
-                            <span class="bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-full text-[10px] sm:text-xs">
-    bayar!
-</span>
-                            nikmati premium tanpa batas!
-                        </p>
+                       <!-- BAGIAN HEADER -->
+<p class="text-[11px] sm:text-xs font-bold text-red-700 flex items-center gap-1 flex-wrap">
+    Sekali 
+    <a id="header-pay-link" href="https://arief12196.github.io/affione/" class="bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-full text-[10px] sm:text-xs no-underline hover:bg-emerald-200 transition">
+        bayar!
+    </a>
+    nikmati premium tanpa batas!
+</p>
+
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    // 1. Tangkap kode referral dari URL jika ada, lalu simpan ke localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref') || urlParams.get('aff');
+    if (refCode) {
+      localStorage.setItem('app_aff_ref', refCode);
+    }
+
+    // 2. Pasang link dinamis dengan kode referral ke teks "bayar!" di header
+    const savedRef = localStorage.getItem('app_aff_ref');
+    let targetUrl = "https://arief12196.github.io/affione/";
+    
+    if (savedRef) {
+      targetUrl += `?ref=${encodeURIComponent(savedRef)}`;
+    }
+
+    const headerPayLink = document.getElementById('header-pay-link');
+    if (headerPayLink) {
+      headerPayLink.href = targetUrl;
+    }
+  });
+</script>
                     </div>
 
                     <div class="flex flex-wrap gap-1 sm:gap-1.5 items-center">
