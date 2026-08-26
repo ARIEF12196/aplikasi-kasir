@@ -134,182 +134,144 @@
             #print-area { position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', monospace; font-size: 11px; }
             @page { margin: 0; size: auto; }
         }
+   
     </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased text-sm m-0 p-0">
+<body class="bg-gray-100 font-sans antialiased text-xs sm:text-sm m-0 p-0 pb-20 lg:pb-0">
 
-    <div class="flex h-screen overflow-hidden">
-        <div class="w-7/12 p-4 flex flex-col h-full">
-            <div class="grid grid-cols-3 gap-3 mb-3">
-                <div class="bg-slate-800 text-white p-3 rounded-lg shadow-sm">
-                    <span class="text-[11px] text-slate-400 block font-medium"><i class="fa-solid fa-vault mr-1"></i> Total Modal Aset</span>
-                    <span id="total-modal-toko" class="text-base font-bold text-emerald-400">Rp 0</span>
+    <div class="flex flex-col lg:flex-row min-h-screen overflow-y-auto lg:overflow-hidden">
+        
+        <!-- BAGIAN KIRI: DAFTAR PRODUK -->
+        <div class="w-full lg:w-7/12 p-3 sm:p-4 flex flex-col h-auto lg:h-full">
+            
+            <!-- KELOMPOK BAGIAN ATAS YANG BISA DITUTUP/DIBUKA -->
+            <div id="top-dashboard-section" class="transition-all duration-300">
+                <!-- Dashboard Kartu Atas -->
+                <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-3">
+                    <div class="bg-slate-800 text-white p-2.5 sm:p-3 rounded-lg shadow-sm">
+                        <span class="text-[10px] sm:text-[11px] text-slate-400 block font-medium truncate"><i class="fa-solid fa-vault mr-1"></i> Total Modal Aset</span>
+                        <span id="total-modal-toko" class="text-xs sm:text-base font-bold text-emerald-400 truncate block">Rp 0</span>
+                    </div>
+                    <div class="bg-slate-800 text-white p-2.5 sm:p-3 rounded-lg shadow-sm">
+                        <span class="text-[10px] sm:text-[11px] text-slate-400 block font-medium truncate"><i class="fa-solid fa-chart-line mr-1"></i> Potensi Laba Toko</span>
+                        <span id="potensi-laba-toko" class="text-xs sm:text-base font-bold text-blue-400 truncate block">Rp 0</span>
+                    </div>
+                    <div class="bg-slate-900 text-white p-2.5 sm:p-3 rounded-lg shadow-sm border border-amber-500/30">
+                        <span class="text-[10px] sm:text-[11px] text-amber-400 block font-medium truncate"><i class="fa-solid fa-wallet mr-1"></i> Kas Akhir</span>
+                        <span id="saldo-aktual-toko" class="text-xs sm:text-base font-bold text-amber-400 truncate block">Rp 0</span>
+                    </div>
                 </div>
-                <div class="bg-slate-800 text-white p-3 rounded-lg shadow-sm">
-                    <span class="text-[11px] text-slate-400 block font-medium"><i class="fa-solid fa-chart-line mr-1"></i> Potensi Laba Toko</span>
-                    <span id="potensi-laba-toko" class="text-base font-bold text-blue-400">Rp 0</span>
-                </div>
-                <div class="bg-slate-900 text-white p-3 rounded-lg shadow-sm border border-amber-500/30">
-                    <span class="text-[11px] text-amber-400 block font-medium"><i class="fa-solid fa-wallet mr-1"></i> Kas akhir/bulanan/tahunan </span>
-                    <span id="saldo-aktual-toko" class="text-base font-bold text-amber-400">Rp 0</span>
-                </div>
+
+                <!-- Header Toko -->
+                <header class="mb-3 flex flex-wrap justify-between items-center bg-white p-3 rounded-lg shadow-sm gap-2">
+                    <div>
+                        <h1 class="text-base sm:text-xl font-bold text-gray-800">KASIR DIFFAZA <span class="text-[10px] sm:text-xs bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-sm font-normal">v10.8.0</span></h1>
+                        <p class="text-[11px] sm:text-xs font-bold text-red-700 flex items-center gap-1 flex-wrap">
+                            Sekali 
+                            <a href="https://sites.google.com/view/diffaza/halaman-muka" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-600 px-2 py-0.5 rounded-full text-[10px] sm:text-xs no-underline transition-colors" target="_blank">
+                                bayar!
+                            </a>
+                            nikmati premium tanpa batas!
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1 sm:gap-1.5 items-center">
+                        <button onclick="backupProduk()" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-file-export"></i> Backup
+                        </button>
+
+                        <input type="file" id="import-file" accept=".csv, .txt" class="hidden" onchange="importProduk(event)">
+                        <button onclick="document.getElementById('import-file').click()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-file-import"></i> Import
+                        </button>
+
+                        <button id="btn-buka-laporan" class="bg-amber-50 hover:bg-amber-100 text-amber-800 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold flex items-center gap-1 border border-amber-200 shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-chart-pie text-amber-600"></i> Laporan
+                        </button>
+                        <button id="btn-tambah-produk-modal" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-plus"></i> Tambah
+                        </button>
+
+                        
+                </header>
             </div>
 
-            <header class="mb-3 flex justify-between items-center bg-white p-3 rounded-lg shadow-sm">
-                <div>
-                    
-
-<h1 class="text-xl font-bold text-gray-800 flex items-center gap-2 flex-wrap">
-  <span>KASIR DIFFAZA 
-    <span class="text-xs bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-sm font-normal">v10.8.0</span>
-  </span>
-  
-  <!-- Tombol Affiliate -->
-  <a href="https://arief12196.github.io/affione/" target="_blank" class="text-xs bg-emerald-100 text-emerald-700 px-1 py-0.5 rounded-sm font-normal">
-    👉 Affiliate
-  </a>
-
-  <!-- Tombol Bayar / Upgrade yang otomatis membawa kode referal tersimpan -->
-  <a href="#" id="btnBayar" onclick="prosesBayarReferal(event)" class="text-xs bg-blue-600 text-white px-2 py-1 rounded-sm font-semibold hover:bg-blue-700">
-    💳 Bayar Sekarang
-  </a>
-</h1>
-
-<script>
-// 1. Simpan referal otomatis begitu halaman kasir dibuka dari link affiliate
-window.addEventListener('DOMContentLoaded', (event) => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const refCode = urlParams.get('ref');
-  
-  if (refCode) {
-    localStorage.setItem('affiliate_ref', refCode);
-  }
-});
-
-// 2. Fungsi saat tombol "Bayar Sekarang" di dalam h1 diklik
-function prosesBayarReferal(e) {
-  e.preventDefault(); // Mencegah link kosong '#' terbuka langsung
-
-  // Ambil kode referal yang tersimpan di browser
-  const savedRef = localStorage.getItem('affiliate_ref');
-  
-  // Base URL halaman pembayaran Anda (Ganti dengan link checkout Anda, misal tokodiffaza.xyz)
-  let checkoutUrl = 'https://tokodiffaza.xyz/'; 
-
-  // Jika ada kode referal, tempelkan otomatis di ujung URL
-  if (savedRef) {
-    checkoutUrl += '?ref=' + savedRef;
-  }
-
-  // Arahkan pengguna ke halaman pembayaran dengan membawa kode referal
-  window.location.href = checkoutUrl;
-}
-</script>
-
-
-
-
-
-
-                    
-  Sekali 
-  <a href="https://sites.google.com/view/diffaza/halaman-muka" 
-   class="bg-emerald-100 hover:bg-emerald-200 text-emerald-600 px-2 py-0.5 rounded-full text-xs no-underline transition-colors" 
-   target="_blank">
-    bayar!
-</a>
-  nikmati premium tanpa batas!
-</p>
-                </div>
-
-<!-- Tombol Backup (Export) -->
-<button onclick="backupProduk()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer">
-    <i class="fa-solid fa-file-export"></i> Backup
-</button>
-
-
-
-<!-- Tambahkan ini di dalam <header> -->
-<input type="file" id="import-file" accept=".csv, .txt" class="hidden" onchange="importProduk(event)">
-<button onclick="document.getElementById('import-file').click()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer">
-    <i class="fa-solid fa-file-import"></i> Import
-</button>
-                <div class="flex gap-1.5">
-                    <button id="btn-buka-laporan" class="bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 border border-amber-200 shadow-sm cursor-pointer">
-                        <i class="fa-solid fa-chart-pie text-amber-600"></i> Laporan & Buku Kas
-                    </button>
-                    <button id="btn-tambah-produk-modal" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer">
-                        <i class="fa-solid fa-plus"></i> Tambah Produk
-                    </button>
-                </div>
-            </header>
-
+            <!-- Search & Kategori -->
             <div class="bg-white p-2.5 rounded-lg shadow-sm mb-3 space-y-2">
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
-                    <input type="text" id="search-product" placeholder="Cari produk berdasarkan nama..." oninput="renderProducts()" class="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-blue-500">
+                <div class="flex gap-2 items-center">
+                    <div class="relative flex-1">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
+                        <input type="text" id="search-product" placeholder="Cari produk berdasarkan nama..." oninput="renderProducts()" class="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-blue-500">
+                    </div>
+                    <!-- Tombol Toggle Sembunyikan/Tampilkan Bagian Atas -->
+                    <button onclick="toggleTopDashboard()" id="btn-toggle-dashboard" title="Sembunyikan/Tampilkan Dashboard Atas" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer border border-gray-300 transition-all">
+                        <i id="toggle-icon" class="fa-solid fa-chevron-up"></i>
+                        <span class="hidden sm:inline" id="toggle-text">Tutup</span>
+                    </button>
                 </div>
+
                 <div class="flex gap-2 overflow-x-auto pb-1" id="category-tabs">
                     <button onclick="switchCategory('Semua')" id="tab-Semua" class="category-btn bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-sm cursor-pointer whitespace-nowrap">Semua</button>
-                    <button onclick="switchCategory('Ecer')" id="tab-Ecer" class="category-btn bg-white text-gray-600 border border-gray-200 px-3 py-1 rounded-full text-xs font-medium cursor-pointer whitespace-nowrap">Ecer</button>
-                    <button onclick="switchCategory('Dus')" id="tab-Dus" class="category-btn bg-white text-gray-600 border border-gray-200 px-3 py-1 rounded-full text-xs font-medium cursor-pointer whitespace-nowrap">Dus</button>
-                    <button onclick="switchCategory('Grosir')" id="tab-Grosir" class="category-btn bg-white text-gray-600 border border-gray-200 px-3 py-1 rounded-full text-xs font-medium
-                        
-                        cursor-pointer whitespace-nowrap">Grosir</button>
+                    <button onclick="switchCategory('Alat Tulis')" id="tab-Alat Tulis" class="category-btn bg-white text-gray-600 border border-gray-200 px-3 py-1 rounded-full text-xs font-medium cursor-pointer whitespace-nowrap">Alat Tulis</button>
+                    <button onclick="switchCategory('Buku')" id="tab-Buku" class="category-btn bg-white text-gray-600 border border-gray-200 px-3 py-1 rounded-full text-xs font-medium cursor-pointer whitespace-nowrap">Buku</button>
+                    <button onclick="switchCategory('Grosir')" id="tab-Grosir" class="category-btn bg-white text-gray-600 border border-gray-200 px-3 py-1 rounded-full text-xs font-medium cursor-pointer whitespace-nowrap">Grosir</button>
                     <button onclick="switchCategory('Lain-lain')" id="tab-Lain-lain" class="category-btn bg-white text-gray-600 border border-gray-200 px-3 py-1 rounded-full text-xs font-medium cursor-pointer whitespace-nowrap">Lain-lain</button>
                 </div>
             </div>
 
-            <div id="product-grid" class="grid grid-cols-4 gap-3 overflow-y-auto pr-1 flex-1 content-start pb-6"></div>
+            <!-- Grid Produk -->
+            <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 overflow-y-auto pr-1 flex-1 content-start pb-6"></div>
         </div>
 
-        <div class="w-5/12 bg-white border-l border-gray-200 p-4 flex flex-col h-full shadow-xl overflow-y-auto">
+        <!-- BAGIAN KANAN: KERANJANG & PEMBAYARAN -->
+        <div id="section-keranjang" class="w-full lg:w-5/12 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-3 sm:p-4 flex flex-col h-auto lg:h-full shadow-xl overflow-y-auto">
             <div class="flex items-center gap-2 pb-2 border-b border-gray-100">
-                <i class="fa-solid fa-cart-shopping text-blue-600 text-lg"></i>
-                <h2 class="text-lg font-bold text-gray-800">Keranjang Belanja</h2>
+                <i class="fa-solid fa-cart-shopping text-blue-600 text-base sm:text-lg"></i>
+                <h2 class="text-base sm:text-lg font-bold text-gray-800">Keranjang Belanja</h2>
             </div>
 
             <div id="cart-items" class="flex-1 min-h-[140px] overflow-y-auto py-2 space-y-2"></div>
 
             <div class="border-t border-gray-100 pt-2 space-y-2">
                 <div class="flex justify-between text-gray-600 text-xs"><span>Subtotal</span><span id="subtotal-val">Rp 0</span></div>
-                <div class="flex justify-between text-lg font-bold text-gray-800 pt-1 border-t border-dashed border-gray-200"><span>Total Tagihan</span><span id="total-val" class="text-blue-600">Rp 0</span></div>
+                <div class="flex justify-between text-base sm:text-lg font-bold text-gray-800 pt-1 border-t border-dashed border-gray-200"><span>Total Tagihan</span><span id="total-val" class="text-blue-600">Rp 0</span></div>
                 
+                <script>
+                    const observer = new MutationObserver(() => {
+                        const floatTotal = document.getElementById('float-total');
+                        const totalVal = document.getElementById('total-val');
+                        const floatBadge = document.getElementById('float-badge');
+
+                        if (floatTotal && totalVal) {
+                            floatTotal.innerText = totalVal.innerText;
+                        }
+                        if (typeof cart !== 'undefined' && floatBadge) {
+                            floatBadge.innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+                        }
+                    });
+                    window.addEventListener('DOMContentLoaded', () => {
+                        const totalValEl = document.getElementById('total-val');
+                        if (totalValEl) {
+                            observer.observe(totalValEl, { childList: true, characterData: true, subtree: true });
+                        }
+                    });
+                </script>
+
                 <div class="pt-0.5">
-                    <label class="block text-[11px] text-gray-500 mb-0.5">No. WhatsApp Pelanggan (Kirim Gambar Struk)</label>
+                    <label class="block text-[11px] text-gray-500 mb-0.5">No. WhatsApp Pelanggan (Opsional)</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-2 text-gray-400 text-xs"><i class="fa-brands fa-whatsapp"></i></span>
-                        <input type="text" id="customer-phone" placeholder="Tanpa Input Nomor!!" class="w-full pl-7 pr-2 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none">
+                        <input type="text" id="customer-phone" placeholder="Kosongkan!" class="w-full pl-7 pr-2 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none focus:border-emerald-500">
                     </div>
                 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                <div class="grid grid-cols-3 gap-2 mt-1">
+                <!-- Tombol Pembayaran -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
                     <button id="btn-bayar-lokal" class="bg-gray-800 hover:bg-gray-950 text-white py-2 rounded-lg font-medium text-[11px] cursor-pointer"><i class="fa-solid fa-save mr-1"></i> Simpan Saja</button>
-                    <button id="btn-bayar-wa" class="bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-bold text-[11px] flex items-center justify-center gap-1 cursor-pointer"><i class="fa-solid fa-image"></i> Salin Struk Gambar WA</button>
-                    <button id="btn-bayar-print" class="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-bold text-[11px] flex items-center justify-center gap-1 cursor-pointer"><i class="fa-solid fa-print"></i> Cetak Thermal</button>
+                   <button onclick="prosesStrukWhatsApp()" id="btn-bayar-wa" class="bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-bold text-[10px] sm:text-[11px] flex items-center justify-center gap-1 cursor-pointer">
+    <i class="fa-solid fa-image"></i> Struk WA
+</button>
+                    <button id="btn-bayar-print" class="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-bold text-[10px] sm:text-[11px] flex items-center justify-center gap-1 cursor-pointer"><i class="fa-solid fa-print"></i> Thermal</button>
                 </div>
 
                 <div class="grid grid-cols-1 gap-2 mt-2">
@@ -318,35 +280,89 @@ function prosesBayarReferal(e) {
                      </button>
                 </div>
 
+                <!-- Kalkulator Kembalian -->
                 <div class="mt-3 bg-slate-50 border border-gray-200 rounded-xl p-2 shadow-inner">
                     <div class="flex items-center justify-between mb-1 text-gray-700 font-bold text-xs">
                         <span class="flex items-center gap-1"><i class="fa-solid fa-calculator text-blue-500"></i> Alat Hitung Kembalian</span>
-                        <span id="calc-hint" class="text-[10px] text-gray-400 font-normal">Masukkan Jumlah Uang Bayar</span>
+                        <span id="calc-hint" class="text-[10px] text-gray-400 font-normal">Masukkan Jumlah Uang</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2 mb-2">
                         <div>
                             <span class="text-[10px] text-gray-400 block">Uang Dibayar (Rp)</span>
-                            <input type="text" id="calc-bayar" placeholder="0" oninput="hitungKembalianOtomatis()" class="w-full bg-white px-2 py-1 border border-gray-300 rounded-md font-mono text-sm font-bold text-slate-800 focus:outline-none">
+                            <input type="text" id="calc-bayar" placeholder="0" oninput="hitungKembalianOtomatis()" class="w-full bg-white px-2 py-1 border border-gray-300 rounded-md font-mono text-xs sm:text-sm font-bold text-slate-800 focus:outline-none">
                         </div>
                         <div>
                             <span class="text-[10px] text-gray-400 block">Uang Kembalian</span>
-                            <input type="text" id="calc-kembalian" readonly value="Rp 0" class="w-full bg-amber-50 px-2 py-1 border border-amber-200 rounded-md font-mono text-sm font-bold text-amber-700 focus:outline-none">
+                            <input type="text" id="calc-kembalian" readonly value="Rp 0" class="w-full bg-amber-50 px-2 py-1 border border-amber-200 rounded-md font-mono text-xs sm:text-sm font-bold text-amber-700 focus:outline-none">
                         </div>
                     </div>
                     <div class="grid grid-cols-4 gap-1">
                         <button onclick="setUangBayar(2000)" class="bg-white hover:bg-gray-100 text-gray-700 p-1.5 rounded border text-[11px] font-semibold">2k</button>
                         <button onclick="setUangBayar(5000)" class="bg-white hover:bg-gray-100 text-gray-700 p-1.5 rounded border text-[11px] font-semibold">5k</button>
-                        <button onclick="setUangBayar(10000)" class="bg-white hover:bg-gray-100 text-gray-700 p-1.5 rounded border text-[11px] font-semibold">10k</button>
-                        <button onclick="setUangBayar(20000)" class="bg-white hover:bg-gray-100 text-gray-700 p-1.5 rounded border text-[11px] font-semibold">20k</button>
-                        <button onclick="setUangBayar(50000)" class="bg-white hover:bg-gray-100 text-gray-700 p-1.5 rounded border text-[11px] font-semibold">50k</button>
-                        <button onclick="setUangBayar(100000)" class="bg-white hover:bg-gray-100 text-gray-700 p-1.5 rounded border text-[11px] font-semibold">100k</button>
-                        <button onclick="setUangPas()" class="bg-blue-50 text-blue-700 border border-blue-200 p-1.5 rounded text-[11px] font-bold col-span-2">Uang Pas</button>
+                        <button onclick="setUangBayar(10000)" class="bg-white hover:bg-gray-100 text-gray-700 p-1.5 rounded-lg border text-[11px] font-semibold">10k</button>
+                        <button onclick="setUangBayar(20000)" class="bg-white hover:bg-gray-100 text-gray-700 p-1.5 rounded-lg border text-[11px] font-semibold">20k</button>
+                        <button onclick="setUangBayar(50000)" class="bg-white hover:bg-gray-100 text-gray-700 p-1.5 rounded-lg border text-[11px] font-semibold">50k</button>
+                        <button onclick="setUangBayar(100000)" class="bg-white hover:bg-gray-100 text-gray-700 p-1.5 rounded-lg border text-[11px] font-semibold">100k</button>
+                        <button onclick="setUangPas()" class="bg-blue-50 text-blue-700 border border-blue-200 p-1.5 rounded-lg text-[11px] font-bold col-span-2">Uang Pas</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+   
+
+    <!-- TOMBOL KERANJANG MELAYANG KHUSUS HP (Floating Cart) -->
+    <div id="floating-cart" class="fixed bottom-3 left-3 right-3 z-50 lg:hidden bg-slate-900 text-white p-3 rounded-2xl shadow-2xl flex items-center justify-between border border-slate-700 transition-all duration-300">
+        <div class="flex items-center gap-2.5">
+            <div class="bg-blue-600 text-white w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shadow-md relative">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="float-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+            </div>
+            <div>
+                <span class="text-[10px] text-slate-400 block leading-tight">Total Keranjang</span>
+                <span id="float-total" class="text-sm font-bold text-emerald-400">Rp 0</span>
+            </div>
+        </div>
+        <button onclick="scrollToKeranjang()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 cursor-pointer">
+            <span>Bayar Sekarang</span>
+            <i class="fa-solid fa-arrow-down"></i>
+        </button>
+    </div>
+
+    <script>
+        // Variabel global sementara untuk URL WhatsApp yang akan dibuka
+        let pendingWhatsAppUrl = '';
+
+        // Fungsi Scroll ke Keranjang (HP)
+        function scrollToKeranjang() {
+            const keranjangEl = document.getElementById('section-keranjang');
+            if (keranjangEl) {
+                keranjangEl.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Fungsi Toggle untuk Sembunyikan/Tampilkan Dashboard Atas
+        function toggleTopDashboard() {
+            const topSec = document.getElementById('top-dashboard-section');
+            const icon = document.getElementById('toggle-icon');
+            const text = document.getElementById('toggle-text');
+
+            if (topSec.style.display === 'none') {
+                topSec.style.display = 'block';
+                icon.className = 'fa-solid fa-chevron-up';
+                text.innerText = 'Tutup';
+            } else {
+                topSec.style.display = 'none';
+                icon.className = 'fa-solid fa-chevron-down';
+                text.innerText = 'Buka';
+            }
+        }
+
+   
+
+
+</script>
     <!-- MODAL LAPORAN -->
     <div id="laporan-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
@@ -1142,42 +1158,87 @@ ${cart.map(i => `
     document.getElementById('rec-pay-val').innerText = formatRupiah(uangBayar);
     document.getElementById('rec-change-val').innerText = formatRupiah(uangBayar - total);
 
-    // 2. Proses render dan salin ke clipboard
-    setTimeout(async () => {
-        const receiptBox = document.getElementById('digital-receipt-box');
-        
-        // Tampilkan elemen agar ter-render sempurna
-        receiptBox.style.position = 'fixed';
-        receiptBox.style.left = '0';
-        receiptBox.style.top = '0';
-        receiptBox.style.zIndex = '9999';
+   // 2. Proses render dan simpan/salin gambar
+setTimeout(async () => {
+    const receiptBox = document.getElementById('digital-receipt-box');
+    
+    // Tampilkan elemen agar ter-render sempurna
+    receiptBox.style.position = 'fixed';
+    receiptBox.style.left = '0';
+    receiptBox.style.top = '0';
+    receiptBox.style.zIndex = '9999';
 
-        try {
-            const canvas = await html2canvas(receiptBox, { useCORS: true, scale: 2 });
+    try {
+        const canvas = await html2canvas(receiptBox, { useCORS: true, scale: 2 });
+        
+        canvas.toBlob(async (blob) => {
+            if (!blob) {
+                alert("Gagal memproses gambar struk.");
+                return;
+            }
             
-            canvas.toBlob(async (blob) => {
-                if (!blob) return;
-                
-                // Salin ke clipboard
+            // Ambil nomor WhatsApp dari input dan bersihkan (hanya ambil angka)
+            let rawPhone = document.getElementById('customer-phone').value.trim();
+            let waNumber = '';
+            
+            if (rawPhone) {
+                waNumber = rawPhone.replace(/\D/g, '');
+                if (waNumber.startsWith('0')) {
+                    waNumber = '62' + waNumber.slice(1);
+                }
+            }
+
+            // Tentukan link tujuan WhatsApp
+            const waLink = waNumber ? `https://wa.me/${waNumber}` : "https://wa.me/";
+
+            // Fungsi pembantu untuk membuka WhatsApp secara aman di HP tanpa diblokir browser
+            const openWhatsAppSafely = () => {
+                // Menggunakan elemen link tiruan agar dibaca browser sebagai interaksi murni
+                const waAnchor = document.createElement('a');
+                waAnchor.href = waLink;
+                waAnchor.target = '_blank';
+                document.body.appendChild(waAnchor);
+                waAnchor.click();
+                document.body.removeChild(waAnchor);
+            };
+
+            try {
+                // Coba salin ke clipboard dulu
                 const item = new ClipboardItem({ "image/png": blob });
                 await navigator.clipboard.write([item]);
-
-                alert('Struk berhasil disalin! Sekarang WhatsApp akan terbuka. Silakan tekan Ctrl+V (Paste) di kolom chat.');
-
                 
-            });
-        } catch (err) {
-            console.error("Gagal menyalin gambar:", err);
-            alert("Gagal menyalin ke clipboard. Pastikan browser diizinkan mengakses clipboard.");
-        } finally {
-            // Sembunyikan kembali elemen
-            receiptBox.style.position = 'absolute';
-            receiptBox.style.left = '-9999px';
-            receiptBox.style.top = '-9999px';
-        }
-    }, 400);
-}
+                alert('Struk berhasil disalin! Silakan paste di WhatsApp.');
+                openWhatsAppSafely();
 
+            } catch (clipErr) {
+                // JIKA GAGAL KARENA IZIN BROWSER HP, ALIHKAN KE FITUR DOWNLOAD OTOMATIS
+                console.warn("Clipboard diblokir browser, mengalihkan ke unduhan gambar...", clipErr);
+                
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'struk-transaksi.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                alert('Browser HP membatasi salin otomatis. Struk telah diunduh sebagai gambar! Silakan kirim gambar tersebut via WhatsApp.');
+                openWhatsAppSafely();
+            }
+        });
+
+    } catch (err) {
+        console.error("Gagal merender gambar:", err);
+        alert("Gagal membuat gambar struk.");
+    } finally {
+        // Sembunyikan kembali elemen
+        receiptBox.style.position = 'absolute';
+        receiptBox.style.left = '-9999px';
+        receiptBox.style.top = '-9999px';
+    }
+}, 100);
+        }
         // MODAL LAPORAN VIEW CONTROL
         function toggleLaporanModal(show) {
             const modal = document.getElementById('laporan-modal');
