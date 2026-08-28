@@ -1888,5 +1888,78 @@ function backupProduk() {
         window.location.href = checkoutUrl;
       }
     </script>
+    <!-- OVERLAY PEMBAYARAN / TRIAL HABIS -->
+<div id="paywall-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center; font-family:sans-serif;">
+  <div style="background:#fff; padding:30px; border-radius:12px; max-width:450px; width:90%; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.3); position:relative;">
+    
+    <!-- TOMBOL X (Tutup Sementara) -->
+    <button onclick="document.getElementById('paywall-overlay').style.display='none';" style="position:absolute; top:15px; right:15px; background:transparent; border:none; font-size:20px; color:#999; cursor:pointer; font-weight:bold;" title="Tutup sementara">&times;</button>
+
+    <h2 style="color:#d9534f; margin-top:0;">Masa Trial Telah Berakhir</h2>
+    <p style="color:#555; line-height:1.5;">
+      Masa uji coba gratis (trial) aplikasi Anda selama 6 hari telah habis. Silakan lakukan pembayaran untuk membuka kembali akses penuh aplikasi.
+    </p>
+    <div style="background:#f9f9f9; padding:15px; border-radius:8px; margin:20px 0; font-size:14px; color:#333;">
+      <strong>Silakan transfer Qris:</strong><br>
+       a.n. MDproduct.id<br>
+      Nominal: <strong>Rp 100.000</strong>
+    </div>
+    
+    <!-- Tombol diarahkan langsung ke Landing Page Affione dengan link referal dinamis -->
+    <a id="btn-pay" href="https://arief12196.github.io/affione/" style="display:block; background:#007bff; color:#fff; padding:12px 20px; text-decoration:none; border-radius:6px; font-weight:bold; margin-bottom:10px;">Lakukan Pembayaran & Konfirmasi</a>
+    
+    <p style="font-size:12px; color:#999; margin-bottom:0;">Butuh bantuan? Hubungi admin.</p>
+  </div>
+</div>
+
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    // 1. Tangkap kode referral dari URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref') || urlParams.get('aff');
+
+    if (refCode) {
+      localStorage.setItem('app_aff_ref', refCode);
+    }
+
+    // 2. Set link pembayaran secara dinamis
+    const savedRef = localStorage.getItem('app_aff_ref');
+    const payButton = document.getElementById('btn-pay');
+    let targetUrl = "https://arief12196.github.io/affione/";
+    
+    if (savedRef) {
+      targetUrl += `?ref=${encodeURIComponent(savedRef)}`;
+    }
+    payButton.href = targetUrl;
+
+    // 3. Logika Durasi Trial 6 Hari
+    const TRIAL_DAYS = 6;
+    const TRIAL_DURATION = TRIAL_DAYS * 24 * 60 * 60 * 1000;
+    
+    const subscriptionStatus = localStorage.getItem('app_sub_status');
+    
+    if (subscriptionStatus !== 'active') {
+      let installDate = localStorage.getItem('app_install_date');
+      const now = new Date().getTime();
+      
+      if (!installDate || isNaN(installDate)) {
+        installDate = now;
+        localStorage.setItem('app_install_date', installDate);
+      }
+      
+      const elapsedTime = now - parseInt(installDate);
+      const remainingTime = TRIAL_DURATION - elapsedTime;
+      const remainingDays = Math.ceil(remainingTime / (1000 * 60 * 60 * 24));
+      
+      if (elapsedTime >= TRIAL_DURATION) {
+        // Jika masa trial habis, tampilkan overlay
+        document.getElementById('paywall-overlay').style.display = 'flex';
+      } 
+      else if (remainingDays === 2 || remainingDays === 1) {
+        alert(`⚠️ Peringatan: Masa uji coba (trial) aplikasi Anda akan berakhir dalam ${remainingDays} hari lagi. Segera lakukan pembayaran agar akses tidak terkunci.`);
+      }
+    }
+  });
+</script>
 </body>
 </html>
