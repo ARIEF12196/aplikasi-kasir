@@ -255,16 +255,18 @@
             <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 overflow-y-auto pr-1 flex-1 content-start pb-6"></div>
         </div>
 
-        <!-- BAGIAN KANAN: KERANJANG & PEMBAYARAN -->
-        <div id="section-keranjang" class="w-full lg:w-5/12 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-3 sm:p-4 flex flex-col h-auto lg:h-full shadow-xl overflow-y-auto">
-            <div class="flex items-center gap-2 pb-2 border-b border-gray-100">
+       <!-- BAGIAN KANAN: KERANJANG & PEMBAYARAN -->
+       <div id="section-keranjang" class="w-full lg:w-5/12 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-3 sm:p-4 flex flex-col h-auto lg:h-full shadow-xl">
+            <div class="flex items-center gap-2 pb-2 border-b border-gray-100 shrink-0">
                 <i class="fa-solid fa-cart-shopping text-blue-600 text-base sm:text-lg"></i>
                 <h2 class="text-base sm:text-lg font-bold text-gray-800">Keranjang Belanja</h2>
             </div>
 
-            <div id="cart-items" class="flex-1 min-h-[140px] overflow-y-auto py-2 space-y-2"></div>
+            <!-- HAPUS overflow-y-auto di utama, pindah dan batasi max-height disini agar hanya item keranjang yang bisa di-scroll -->
+            <div id="cart-items" class="flex-1 min-h-[140px] max-h-[220px] lg:max-h-[300px] overflow-y-auto py-2 space-y-2 pr-1"></div>
 
-            <div class="border-t border-gray-100 pt-2 space-y-2">
+            <!-- Bagian bawah (Subtotal, Total Tagihan, & Kalkulator) akan diam/terkunci di bawah -->
+            <div class="border-t border-gray-100 pt-2 space-y-2 shrink-0">
                 <div class="flex justify-between text-gray-600 text-xs"><span>Subtotal</span><span id="subtotal-val">Rp 0</span></div>
                 <div class="flex justify-between text-base sm:text-lg font-bold text-gray-800 pt-1 border-t border-dashed border-gray-200"><span>Total Tagihan</span><span id="total-val" class="text-blue-600">Rp 0</span></div>
                 
@@ -287,16 +289,9 @@
                             observer.observe(totalValEl, { childList: true, characterData: true, subtree: true });
                         }
                     });
-                </script>
+</script>
 
-                <div class="pt-0.5">
-                    <label class="block text-[11px] text-gray-500 mb-0.5">No. WhatsApp Pelanggan (Opsional)</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-2 text-gray-400 text-xs"><i class="fa-brands fa-whatsapp"></i></span>
-                        <input type="text" id="customer-phone" placeholder="Kosongkan!" class="w-full pl-7 pr-2 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none focus:border-emerald-500">
-                    </div>
-                </div>
-
+</div>
                 <!-- Tombol Pembayaran -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
                     <button id="btn-bayar-lokal" class="bg-gray-800 hover:bg-gray-950 text-white py-2 rounded-lg font-medium text-[11px] cursor-pointer"><i class="fa-solid fa-save mr-1"></i> Simpan Saja</button>
