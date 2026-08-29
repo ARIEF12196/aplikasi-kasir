@@ -207,6 +207,18 @@
 </script>
                     </div>
 
+
+
+
+<!-- Tambahkan tombol ini di dalam <div class="flex flex-wrap gap-1 sm:gap-1.5 items-center"> pada header Anda -->
+<button onclick="bukaRangkumanStok()" class="bg-purple-600 hover:bg-purple-700 text-white px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold flex items-center gap-1 cursor-pointer shadow-sm">
+    <i class="fa-solid fa-boxes-stacked"></i> Rangkuman Stok
+</button>
+
+
+
+
+                    
                     <div class="flex flex-wrap gap-1 sm:gap-1.5 items-center">
                         <button onclick="backupProduk()" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold flex items-center gap-1 cursor-pointer">
                             <i class="fa-solid fa-file-export"></i> Backup
@@ -1969,5 +1981,160 @@ function backupProduk() {
     }
   });
 </script>
+
+
+
+
+
+
+    // Fungsi untuk Export/Cetak data ke file Excel (.xls)
+function cetakRangkumanStok() {
+    if (!globalProductsCache || globalProductsCache.length === 0) {
+        alert("Tidak ada data stok yang bisa diexport ke Excel!");
+        return;
+    }
+
+    let htmlContent = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+            <meta charset="utf-8">
+            <title>Laporan Rangkuman Stok</title>
+            <style>
+                table { border-collapse: collapse; width: 100%; }
+                th, td { border: 0.5pt solid #cccccc; padding: 6px; font-family: Arial, sans-serif; font-size: 11pt; }
+                th { background-color: #f2f2f2; font-weight: bold; text-align: center; }
+                .title { font-size: 14pt; font-weight: bold; text-align: center; margin-bottom: 10px; }
+            </style>
+        </head>
+        <body>
+            <table>
+                <tr>
+                    <th colspan="5" style="font-size: 14pt; background-color: #ffffff; border: none; text-align: center;">LAPORAN RANGKUMAN STOK - DIFFAZA ATK</th>
+                </tr>
+                <tr><td colspan="5" style="border: none;"></td></tr>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Produk</th>
+                        <th>Kategori</th>
+                        <th>Harga Jual</th>
+                        <th>Stok</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    globalProductsCache.forEach((item, index) => {
+        let nama = item.name || item.nama || item.nama_barang || 'Tanpa Nama';
+        let kategori = item.category || item.kategori || 'Umum';
+        let harga = Number(item.price || item.harga || item.harga_jual || 0);
+        let stok = item.stock !== undefined ? item.stock : (item.stok !== undefined ? item.stok : 0);
+
+        htmlContent += `
+            <tr>
+                <td align="center">${index + 1}</td>
+                <td>${nama}</td>
+                <td>${kategori}</td>
+                <td align="right">${harga}</td>
+                <td align="center">${stok}</td>
+            </tr>
+        `;
+    });
+
+    htmlContent += `
+                </tbody>
+            </table>
+        </body>
+        </html>
+    `;
+
+    // Buat file Blob dan picu download otomatis sebagai format Excel (.xls)
+    const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    
+    // Format nama file berdasarkan tanggal hari ini
+    const tanggalStr = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `Laporan_Stok_${tanggalStr}.xls`;
+    
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+
+
+
+</script>
+</script>
+<!-- MODAL RANGKUMAN STOK -->
+<div id="modal-rangkuman-stok" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-3">
+    <div class="bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+        <!-- Header Modal -->
+        <div class="bg-slate-900 text-white px-4 py-3 flex justify-between items-center">
+            <h3 class="font-bold text-sm sm:text-base flex items-center gap-2">
+                <i class="fa-solid fa-warehouse text-emerald-400"></i> Rangkuman Seluruh Data Stok
+            </h3>
+            <button onclick="tutupRangkumanStok()" class="text-gray-400 hover:text-white text-sm font-bold px-2 py-1 cursor-pointer">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Info Ringkas / Statistik Cepat -->
+        <div class="grid grid-cols-3 gap-2 p-3 bg-slate-50 border-b border-gray-200 text-center">
+            <div class="bg-white p-2 rounded border border-gray-200 shadow-xs">
+                <span class="text-[10px] text-gray-500 block">Total Jenis Produk</span>
+                <span id="summary-total-jenis" class="text-xs sm:text-sm font-bold text-slate-800">0</span>
+            </div>
+            <div class="bg-white p-2 rounded border border-gray-200 shadow-xs">
+                <span class="text-[10px] text-gray-500 block">Total Kuantitas Stok</span>
+                <span id="summary-total-qty" class="text-xs sm:text-sm font-bold text-blue-600">0</span>
+            </div>
+            <div class="bg-white p-2 rounded border border-gray-200 shadow-xs">
+                <span class="text-[10px] text-gray-500 block">Stok Menipis (&le; 3)</span>
+                <span id="summary-total-minipis" class="text-xs sm:text-sm font-bold text-red-600">0</span>
+            </div>
+        </div>
+
+        <!-- Tabel Data Stok -->
+        <div class="p-3 overflow-y-auto flex-1">
+            <div class="mb-2">
+                <input type="text" id="search-summary" placeholder="Cari dalam rangkuman..." oninput="filterRangkumanStok()" class="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none focus:border-purple-500">
+            </div>
+            <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-700 border-b border-gray-200">
+                            <th class="p-2">No</th>
+                            <th class="p-2">Nama Produk</th>
+                            <th class="p-2">Kategori</th>
+                            <th class="p-2 text-right">Harga Jual</th>
+                            <th class="p-2 text-center">Stok</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-summary-body">
+                        <!-- Data produk akan dirender secara dinamis melalui script di bawah -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+      <!-- Footer Modal (Diperbarui dengan Tombol Cetak) -->
+<div class="bg-gray-50 px-4 py-2.5 border-t border-gray-200 flex justify-between items-center">
+    <span class="text-[11px] text-gray-500">Data diambil langsung dari sistem penyimpanan aktif kasir.</span>
+    
+    <div class="flex gap-2">
+        <button onclick="cetakRangkumanStok()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer">
+            <i class="fa-solid fa-print"></i> Cetak / Print
+        </button>
+        <button onclick="tutupRangkumanStok()" class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">
+            Tutup
+        </button>
+    </div>
+</div>
+</div>
+    
 </body>
 </html>
