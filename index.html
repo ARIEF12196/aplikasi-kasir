@@ -1991,15 +1991,16 @@ function backupProduk() {
 // Variabel penyimpan referensi data mentah untuk filter pencarian modal
 let globalProductsCache = [];
 
-// Fungsi untuk membuka modal dan merangkum stok
+
+// Fungsi untuk membuka modal dan merangkum stok (Diperbarui agar sinkron data terbaru)
 function bukaRangkumanStok() {
     const modal = document.getElementById('modal-rangkuman-stok');
     modal.classList.remove('hidden');
 
-    // Ambil data produk (menyesuaikan dengan variabel utama array produk di aplikasi kasir Anda)
-    if (typeof products !== 'undefined') {
+    // Paksa ambil ulang dari sumber data utama atau localStorage terbaru
+    if (typeof products !== 'undefined' && products.length > 0) {
         globalProductsCache = products;
-    } else if (typeof daftarProduk !== 'undefined') {
+    } else if (typeof daftarProduk !== 'undefined' && daftarProduk.length > 0) {
         globalProductsCache = daftarProduk;
     } else {
         try {
@@ -2012,6 +2013,10 @@ function bukaRangkumanStok() {
     renderIsiRangkuman(globalProductsCache);
 }
 
+
+
+
+    
 // Fungsi untuk menutup modal
 function tutupRangkumanStok() {
     const modal = document.getElementById('modal-rangkuman-stok');
