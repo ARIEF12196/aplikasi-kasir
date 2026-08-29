@@ -1985,9 +1985,53 @@ function backupProduk() {
 
 
 
-
+    
 <script>
+// Fungsi untuk menghapus keseluruhan grid dan database produk
+function konfirmasiHapusSemuaProduk() {
+    // Konfirmasi keamanan lapis pertama
+    let konfirmasi1 = confirm("PERINGATAN KERAS: Apakah Anda yakin ingin MENGHAPUS SELURUH data produk? Tindakan ini akan mengosongkan grid produk dan tidak dapat dibatalkan!");
+    if (!konfirmasi1) return;
 
+    // Konfirmasi lapis kedua untuk mencegah salah klik
+    let konfirmasi2 = confirm("Yakin sekali? Semua daftar barang, stok, dan harga akan hilang total dari sistem.");
+    if (!konfirmasi2) return;
+
+    // 1. Kosongkan variabel array utama di memori aplikasi kasir Anda
+    if (typeof products !== 'undefined') {
+        products = [];
+    }
+    if (typeof daftarProduk !== 'undefined') {
+        daftarProduk = [];
+    }
+    globalProductsCache = [];
+
+    // 2. Hapus data dari penyimpanan lokal browser (localStorage)
+    localStorage.removeItem('products');
+    localStorage.removeItem('daftarProduk');
+    
+    // Pastikan tersimpan sebagai array kosong di localStorage
+    localStorage.setItem('products', JSON.stringify([]));
+    localStorage.setItem('daftarProduk', JSON.stringify([]));
+
+    // 3. Panggil fungsi render grid utama aplikasi kasir Anda agar tampilannya langsung kosong
+    if (typeof renderProducts === 'function') {
+        renderProducts();
+    } else if (typeof tampilkanProduk === 'function') {
+        tampilkanProduk();
+    }
+
+    // 4. Tutup modal rangkuman jika sedang terbuka
+    tutupRangkumanStok();
+
+    alert("Semua data produk berhasil dihapus dan dikosongkan.");
+    
+    // 5. Muat ulang halaman otomatis untuk memastikan grid benar-benar bersih total
+    location.reload();
+}
+
+
+    
 // Variabel penyimpan referensi data mentah untuk filter pencarian modal
 let globalProductsCache = [];
 
@@ -2221,7 +2265,14 @@ function cetakRangkumanStok() {
       <!-- Footer Modal (Diperbarui dengan Tombol Cetak) -->
 <div class="bg-gray-50 px-4 py-2.5 border-t border-gray-200 flex justify-between items-center">
     <span class="text-[11px] text-gray-500">Data diambil langsung dari sistem penyimpanan aktif kasir.</span>
-    
+
+
+
+    <!-- Tombol Hapus Seluruh Produk -->
+<div><button onclick="konfirmasiHapusSemuaProduk()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer">
+    <i class="fa-solid fa-triangle-exclamation"></i> Hapus Semua Produk
+</button>
+</div>
     <div class="flex gap-2">
         <button onclick="cetakRangkumanStok()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer">
             <i class="fa-solid fa-print"></i> Cetak / Print
