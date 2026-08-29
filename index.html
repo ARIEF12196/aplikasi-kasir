@@ -1986,8 +1986,100 @@ function backupProduk() {
 
 
 
+<script>
 
-    // Fungsi untuk Export/Cetak data ke file Excel (.xls)
+// Variabel penyimpan referensi data mentah untuk filter pencarian modal
+let globalProductsCache = [];
+
+// Fungsi untuk membuka modal dan merangkum stok
+function bukaRangkumanStok() {
+    const modal = document.getElementById('modal-rangkuman-stok');
+    modal.classList.remove('hidden');
+
+    // Ambil data produk (menyesuaikan dengan variabel utama array produk di aplikasi kasir Anda)
+    if (typeof products !== 'undefined') {
+        globalProductsCache = products;
+    } else if (typeof daftarProduk !== 'undefined') {
+        globalProductsCache = daftarProduk;
+    } else {
+        try {
+            globalProductsCache = JSON.parse(localStorage.getItem('products') || localStorage.getItem('daftarProduk') || '[]');
+        } catch (e) {
+            globalProductsCache = [];
+        }
+    }
+
+    renderIsiRangkuman(globalProductsCache);
+}
+
+// Fungsi untuk menutup modal
+function tutupRangkumanStok() {
+    const modal = document.getElementById('modal-rangkuman-stok');
+    modal.classList.add('hidden');
+}
+
+// Render data ke dalam tabel modal dan hitung statistik ringkasnya
+function renderIsiRangkuman(dataArray) {
+    const tbody = document.getElementById('table-summary-body');
+    const elTotalJenis = document.getElementById('summary-total-jenis');
+    const elTotalQty = document.getElementById('summary-total-qty');
+    const elTotalMenipis = document.getElementById('summary-total-minipis');
+
+    tbody.innerHTML = '';
+
+    if (!dataArray || dataArray.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">Belum ada data stok produk tersedia.</td></tr>`;
+        elTotalJenis.innerText = '0';
+        elTotalQty.innerText = '0';
+        elTotalMenipis.innerText = '0';
+        return;
+    }
+
+    let totalQty = 0;
+    let totalMenipis = 0;
+
+    dataArray.forEach((item, index) => {
+        let nama = item.name || item.nama || item.nama_barang || 'Tanpa Nama';
+        let kategori = item.category || item.kategori || 'Umum';
+        let harga = item.price || item.harga || item.harga_jual || 0;
+        let stok = item.stock !== undefined ? item.stock : (item.stok !== undefined ? item.stok : 0);
+
+        totalQty += Number(stok);
+        if (Number(stok) <= 3) {
+            totalMenipis += 1;
+        }
+
+        let rowClass = Number(stok) <= 3 ? 'bg-red-50 text-red-900 font-semibold' : 'hover:bg-gray-50';
+
+        let tr = document.createElement('tr');
+        tr.className = `border-b border-gray-100 ${rowClass}`;
+        tr.innerHTML = `
+            <td class="p-2 text-gray-500">${index + 1}</td>
+            <td class="p-2 font-medium text-slate-800">${nama}</td>
+            <td class="p-2"><span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px]">${kategori}</span></td>
+            <td class="p-2 text-right font-mono">Rp ${Number(harga).toLocaleString('id-ID')}</td>
+            <td class="p-2 text-center font-bold ${Number(stok) <= 3 ? 'text-red-600' : 'text-emerald-600'}">${stok}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    elTotalJenis.innerText = dataArray.length;
+    elTotalQty.innerText = totalQty.toLocaleString('id-ID');
+    elTotalMenipis.innerText = totalMenipis;
+}
+
+// Fitur pencarian instan khusus di dalam modal rangkuman
+function filterRangkumanStok() {
+    const keyword = document.getElementById('search-summary').value.toLowerCase();
+    const filtered = globalProductsCache.filter(item => {
+        let nama = (item.name || item.nama || item.nama_barang || '').toLowerCase();
+        let kategori = (item.category || item.kategori || '').toLowerCase();
+        return nama.includes(keyword) || kategori.includes(keyword);
+    });
+    renderIsiRangkuman(filtered);
+}
+
+// Fungsi untuk Export/Cetak data ke file Excel (.xls)
 function cetakRangkumanStok() {
     if (!globalProductsCache || globalProductsCache.length === 0) {
         alert("Tidak ada data stok yang bisa diexport ke Excel!");
@@ -2135,6 +2227,7 @@ function cetakRangkumanStok() {
     </div>
 </div>
 </div>
+
     
 </body>
 </html>
