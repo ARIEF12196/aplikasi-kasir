@@ -2170,21 +2170,22 @@ function cetakRangkumanStok() {
     `;
 
     globalProductsCache.forEach((item, index) => {
-        let nama = item.name || item.nama || item.nama_barang || 'Tanpa Nama';
-        let kategori = item.category || item.kategori || 'Umum';
-        let harga = Number(item.price || item.harga || item.harga_jual || 0);
-        let stok = item.stock !== undefined ? item.stock : (item.stok !== undefined ? item.stok : 0);
+    let nama = item.name || item.nama || item.nama_barang || 'Tanpa Nama';
+    let kategori = item.category || item.kategori || 'Umum';
+    let harga = Number(item.price || item.harga || item.harga_jual || 0);
+    let stok = item.stock !== undefined ? item.stock : (item.stok !== undefined ? item.stok : 0);
 
-        htmlContent += `
-            <tr>
-                <td align="center">${index + 1}</td>
-                <td>${nama}</td>
-                <td>${kategori}</td>
-                <td align="right">${harga}</td>
-                <td align="center">${stok}</td>
-            </tr>
-        `;
-    });
+    htmlContent += `
+        <tr>
+            <td align="center">${index + 1}</td>
+            <td>${nama}</td>
+            <td>${kategori}</td>
+            <td align="right">${harga}</td>
+            <td align="center">${stok}</td>
+            <td align="center"></td> <!-- Kolom SO -->
+        </tr>
+    `;
+});
 
     htmlContent += `
                 </tbody>
