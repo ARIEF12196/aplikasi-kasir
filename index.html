@@ -1987,17 +1987,17 @@ function backupProduk() {
 
     
 <script>
-// Fungsi untuk menghapus keseluruhan grid dan database produk
+// Fungsi untuk menghapus keseluruhan grid dan database produk secara total
 function konfirmasiHapusSemuaProduk() {
     // Konfirmasi keamanan lapis pertama
-    let konfirmasi1 = confirm("PERINGATAN KERAS: Apakah Anda yakin ingin MENGHAPUS SELURUH data produk? Tindakan ini akan mengosongkan grid produk dan tidak dapat dibatalkan!");
+    let konfirmasi1 = confirm("PERINGATAN KERAS: Apakah Anda yakin ingin MENGHAPUS SELURUH data produk dan katalog? Tindakan ini tidak dapat dibatalkan!");
     if (!konfirmasi1) return;
 
     // Konfirmasi lapis kedua untuk mencegah salah klik
     let konfirmasi2 = confirm("Yakin sekali? Semua daftar barang, stok, dan harga akan hilang total dari sistem.");
     if (!konfirmasi2) return;
 
-    // 1. Kosongkan variabel array utama di memori aplikasi kasir Anda
+    // 1. Kosongkan semua variabel array utama di memori aplikasi kasir
     if (typeof products !== 'undefined') {
         products = [];
     }
@@ -2006,15 +2006,17 @@ function konfirmasiHapusSemuaProduk() {
     }
     globalProductsCache = [];
 
-    // 2. Hapus data dari penyimpanan lokal browser (localStorage)
+    // 2. Hapus seluruh data dari penyimpanan lokal browser (localStorage) termasuk kunci katalog v10
     localStorage.removeItem('products');
     localStorage.removeItem('daftarProduk');
+    localStorage.removeItem('kasir_products_v10'); // <-- Kunci katalog utama Anda dibersihkan di sini
     
-    // Pastikan tersimpan sebagai array kosong di localStorage
+    // Pastikan tersimpan sebagai array kosong agar bersih dari sisa cache
     localStorage.setItem('products', JSON.stringify([]));
     localStorage.setItem('daftarProduk', JSON.stringify([]));
+    localStorage.setItem('kasir_products_v10', JSON.stringify([]));
 
-    // 3. Panggil fungsi render grid utama aplikasi kasir Anda agar tampilannya langsung kosong
+    // 3. Panggil fungsi render grid utama aplikasi kasir agar tampilannya langsung kosong
     if (typeof renderProducts === 'function') {
         renderProducts();
     } else if (typeof tampilkanProduk === 'function') {
@@ -2022,11 +2024,13 @@ function konfirmasiHapusSemuaProduk() {
     }
 
     // 4. Tutup modal rangkuman jika sedang terbuka
-    tutupRangkumanStok();
+    if (typeof tutupRangkumanStok === 'function') {
+        tutupRangkumanStok();
+    }
 
-    alert("Semua data produk berhasil dihapus dan dikosongkan.");
+    alert("Semua data produk dan katalog berhasil dihapus bersih total.");
     
-    // 5. Muat ulang halaman otomatis untuk memastikan grid benar-benar bersih total
+    // 5. Muat ulang halaman otomatis untuk memastikan grid benar-benar bersih dari cache
     location.reload();
 }
 
